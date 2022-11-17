@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div ng-controller="productsController">
+        <table class="table" border="1">
+            <thead>
+                <tr>
+                    <th>STT</th>
+                    <th>Name</th>
+                    <th>Price</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="item in products">
+                    <td>{{$index + 1}}</td>
+                    <td>{{item.name}}</td>
+                    <td>{{item.price}}</td>
+                    <td>
+                        <button>Edit</button>
+                        <button ng-click="removeItem(item.id)" onclick="return confirm('Really?')">Remove</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <hr>
+        <form ng-submit="addItem()">
+            <div>
+                <label for="">Name</label>
+                <input type="text" ng-model="product.name">
+            </div>
+            <div>
+                <label for="">Price</label>
+                <input type="price" ng-model="product.price">
+            </div>
+            <button>Submit</button>
+        </form>
+    </div>
+
+
+    <script src="../js/angular.min.js"></script>
+    <script>
+        angular.module('myApp', [])
+        .controller('productsController', function($scope, $http) {
+            $scope.products = [];
+            $http.get("http://localhost:3000/products").then((respone) => {
+                $scope.products = respone.data;
+                console.log(respone.data);
+            })
+
+            $scope.addItem = function() {
+                $http.post("http://localhost:3000/products/", $scope.product).then((respone) => {
+                    $scope.products = respone.data;
+                })
+            }
+
+            $scope.removeItem = function(id) {
+                $http.delete("http://localhost:3000/products/"+id).then((respone) => {
+                    $scope.products = respone.data;
+                })
+            }
+        })
+
+    </script>
+</body>
+</html>
